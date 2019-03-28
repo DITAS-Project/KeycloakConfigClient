@@ -1,0 +1,9 @@
+{
+  "roles": [
+    "tester",
+    "admin"
+  ],
+  "users": [
+    {"username": "test","password": "123456","realmRoles": ["tester"]}
+  ]
+}

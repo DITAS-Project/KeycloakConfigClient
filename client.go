@@ -117,7 +117,7 @@ func encryptWithPublicKey(msg []byte, pub *rsa.PublicKey) ([]byte, error) {
 }
 
 
-func (client *ConfigClient) sendConfig(config Config) error {
+func (client *ConfigClient) SendConfig(config Config) error {
 	data, err := json.Marshal(config)
 	if err != nil{
 		log.Error("failed to marshal config")
@@ -140,7 +140,7 @@ func (client *ConfigClient) sendConfig(config Config) error {
 	return nil
 }
 
-func (client *ConfigClient) sendBlueprint(blueprint BluePrint) error {
+func (client *ConfigClient) SendBlueprint(blueprint BluePrint) error {
 	data, err := json.Marshal(blueprint)
 	if err != nil{
 		log.Error("failed to marshal blueprint config")

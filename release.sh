@@ -5,7 +5,7 @@ package_split=(${package//\// })
 package_name=${package_split[-1]}
 
 
-platforms=("windows/amd64" "windows/386" "darwin/amd64")
+platforms=("windows/amd64" "windows/386" "darwin/amd64" "linux/386" "linux/amd64")
 if [ -d "build/" ]; then
     rm -rf build/
 fi

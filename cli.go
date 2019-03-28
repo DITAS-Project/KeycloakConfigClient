@@ -27,7 +27,7 @@ import (
 
 var scanner = bufio.NewScanner(os.Stdin)
 
-func simpleQuestion(question string, style color_v1.Color) bool {
+func SimpleQuestion(question string, style color.Color) bool {
 	style.Println(question + "[y/n]")
 	scanner.Scan()
 
@@ -38,7 +38,7 @@ func simpleQuestion(question string, style color_v1.Color) bool {
 	return false
 }
 
-func readString(question string, style color.Color, repeats int, validate func(string) bool) (*string, error) {
+func ReadString(question string, style color.Color, repeats int, validate func(string) bool) (*string, error) {
 	var value string
 	asked := -1
 	for {
@@ -59,14 +59,14 @@ func readString(question string, style color.Color, repeats int, validate func(s
 	return nil, fmt.Errorf("no awnser recived")
 }
 
-func menu(question string, style color.Color, options []string) int {
+func Menu(question string, style color.Color, options []string) int {
 	selector := ""
 	for i, s := range options {
 		selector += fmt.Sprintf("\t%d: %s\n", i, s);
 	}
 
 	for {
-		num, err := readString(fmt.Sprintf("%s:\n %s", question, selector), style, 1, func(input string) bool {
+		num, err := ReadString(fmt.Sprintf("%s:\n %s", question, selector), style, 1, func(input string) bool {
 			num, err := strconv.Atoi(input)
 			return err == nil && num >= 0 && num < len(options)
 		})

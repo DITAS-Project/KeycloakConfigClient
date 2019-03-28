@@ -1,4 +1,4 @@
-module github.com/DITAS/KeycloakConfigClient
+module github.com/DITAS-Project/KeycloakConfigClient
 
 go 1.12
 
