@@ -15,7 +15,7 @@
  *
  * This is being developed for the DITAS Project: https://www.ditas-project.eu/
  */
-package main
+package kcc
 
 type KeyMessage struct {
 	Algo string `json:"algorithm"`
@@ -39,4 +39,3 @@ type UserConfig struct {
 	Password string   `json:"password"`
 	Roles    []string `json:"realmRoles"`
 }
-

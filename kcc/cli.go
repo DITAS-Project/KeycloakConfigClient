@@ -15,14 +15,15 @@
  *
  * This is being developed for the DITAS Project: https://www.ditas-project.eu/
  */
-package main
+package kcc
 
 import (
 	"bufio"
 	"fmt"
-	"gopkg.in/gookit/color.v1"
 	"os"
 	"strconv"
+
+	"gopkg.in/gookit/color.v1"
 )
 
 var scanner = bufio.NewScanner(os.Stdin)
@@ -62,7 +63,7 @@ func ReadString(question string, style color.Color, repeats int, validate func(s
 func Menu(question string, style color.Color, options []string) int {
 	selector := ""
 	for i, s := range options {
-		selector += fmt.Sprintf("\t%d: %s\n", i, s);
+		selector += fmt.Sprintf("\t%d: %s\n", i, s)
 	}
 
 	for {
@@ -78,4 +79,3 @@ func Menu(question string, style color.Color, options []string) int {
 		}
 	}
 }
-

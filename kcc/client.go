@@ -15,7 +15,7 @@
  *
  * This is being developed for the DITAS Project: https://www.ditas-project.eu/
  */
-package main
+package kcc
 
 import (
 	"bytes"
@@ -30,6 +30,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
+
+	"github.com/ethereum/go-ethereum/log"
 )
 
 type ConfigClient struct {
@@ -116,10 +118,9 @@ func encryptWithPublicKey(msg []byte, pub *rsa.PublicKey) ([]byte, error) {
 	return text, nil
 }
 
-
 func (client *ConfigClient) SendConfig(config Config) error {
 	data, err := json.Marshal(config)
-	if err != nil{
+	if err != nil {
 		log.Error("failed to marshal config")
 		return err
 	}
@@ -136,31 +137,30 @@ func (client *ConfigClient) SendConfig(config Config) error {
 	if resp.StatusCode > 200 {
 		return fmt.Errorf("failed to upadte config %s\n", string(data))
 	}
-	log.Debug("service response is %s",string(data))
+	log.Debug("service response is %s", string(data))
 	return nil
 }
 
 func (client *ConfigClient) SendBlueprint(blueprint BluePrint) error {
 	data, err := json.Marshal(blueprint)
-	if err != nil{
+	if err != nil {
 		log.Error("failed to marshal blueprint config")
 		return err
 	}
 	resp, err := http.Post(client.endpoint+"/v1/init", "plain/text", bytes.NewReader(data))
-	if err != nil{
+	if err != nil {
 		log.Error("failed to send blueprint request")
 		return err
 	}
 
-
 	data, err = ioutil.ReadAll(resp.Body)
-	if err != nil{
+	if err != nil {
 		return err
 	}
 
 	if resp.StatusCode > 200 {
 		return fmt.Errorf("failed to upload blueprint %+v", string(data))
 	}
-	log.Debug("service response is %s",string(data))
+	log.Debug("service response is %s", string(data))
 	return nil
 }

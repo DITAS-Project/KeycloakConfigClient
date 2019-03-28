@@ -23,17 +23,19 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"go.uber.org/zap"
-	"gopkg.in/gookit/color.v1"
 	"io/ioutil"
 	"net/http"
 	"os"
+
+	. "github.com/DITAS-Project/KeycloakConfigClient/kcc"
+	"go.uber.org/zap"
+	"gopkg.in/gookit/color.v1"
 )
 
 var logger *zap.Logger
 var log *zap.SugaredLogger
 
-func init(){
+func init() {
 	lgr, _ := zap.NewProduction()
 	logger = lgr
 	log = logger.Sugar()
@@ -42,9 +44,9 @@ func init(){
 func main() {
 	defer logger.Sync()
 
-	address := flag.String("address","","KeyCloakConfig API address")
-	verbose := flag.Bool("verbose",false,"Enable verbose logging")
-	unsecured := flag.Bool("unsecured",true,"trust all ssl certificates")
+	address := flag.String("address", "", "KeyCloakConfig API address")
+	verbose := flag.Bool("verbose", false, "Enable verbose logging")
+	unsecured := flag.Bool("unsecured", true, "trust all ssl certificates")
 
 	flag.Parse()
 
@@ -58,9 +60,9 @@ func main() {
 	}
 
 	var endpoint string
-	if *address == ""{
+	if *address == "" {
 		address, err := ReadString("What is the keycloak-config endpoint you want to use?", color.LightBlue, -1, nil)
-		if err != nil{
+		if err != nil {
 			log.Panic("need address to function")
 		}
 		endpoint = *address
@@ -68,27 +70,28 @@ func main() {
 		endpoint = *address
 	}
 
-	client,err := NewKCC(endpoint)
+	client, err := NewKCC(endpoint)
 
-	if err != nil{
-		log.Error("failed to create client",err)
+	if err != nil {
+		log.Error("failed to create client", err)
 		color.Red.Println("Could not create client.")
 	}
 	var blueprint = BluePrint{}
 	var config = Config{}
 	for {
-		num := Menu("What do you want to do?",color.LightGreen,[]string{
+		num := Menu("What do you want to do?", color.LightGreen, []string{
 			"Create a new Blueprint Realm",
 			"Create or Update a Realm Config",
 			"quit",
 		})
 
 		switch num {
-			case 0:
-				blueprintCommand(blueprint, client)
-			case 1:
-				configCommand(blueprint, config, client)
-			case 2: {
+		case 0:
+			blueprintCommand(blueprint, client)
+		case 1:
+			configCommand(blueprint, config, client)
+		case 2:
+			{
 				color.LightGreen.Println("Bye.")
 				os.Exit(0)
 			}
@@ -158,7 +161,7 @@ func configCommand(blueprint BluePrint, config Config, client *ConfigClient) {
 				user.Password = *pwd
 				user.Roles = make([]string, 0)
 				for {
-					i := Menu(fmt.Sprintf("Select role for %s",*name),color.LightBlue,user.Roles)
+					i := Menu(fmt.Sprintf("Select role for %s", *name), color.LightBlue, user.Roles)
 					user.Roles = append(user.Roles, roles[i])
 
 					ctn := SimpleQuestion("Add another role?", color.LightBlue)
@@ -229,4 +232,3 @@ func blueprintCommand(blueprint BluePrint, client *ConfigClient) {
 
 	}
 }
-
