@@ -47,6 +47,10 @@ func main() {
 	address := flag.String("address", "", "KeyCloakConfig API address")
 	verbose := flag.Bool("verbose", false, "Enable verbose logging")
 	unsecured := flag.Bool("unsecured", true, "trust all ssl certificates")
+	headless := flag.Bool("headless", true, "run without cli")
+
+	blueprintFile := flag.String("bl", "", "blueprint file to commit")
+	configFile := flag.String("cf", "", "relam config to commit,needs to have blueprint id.")
 
 	flag.Parse()
 
@@ -60,6 +64,10 @@ func main() {
 	}
 
 	var endpoint string
+	if *headless && *address == "" {
+		log.Panic("can't run in headless without address.")
+	}
+
 	if *address == "" {
 		address, err := ReadString("What is the keycloak-config endpoint you want to use?", color.LightBlue, -1, nil)
 		if err != nil {
@@ -73,27 +81,55 @@ func main() {
 	client, err := NewKCC(endpoint)
 
 	if err != nil {
-		log.Error("failed to create client", err)
-		color.Red.Println("Could not create client.")
+		log.Panic("failed to create client", err)
 	}
+
 	var blueprint = BluePrint{}
 	var config = Config{}
-	for {
-		num := Menu("What do you want to do?", color.LightGreen, []string{
-			"Create a new Blueprint Realm",
-			"Create or Update a Realm Config",
-			"quit",
-		})
 
-		switch num {
-		case 0:
-			blueprintCommand(blueprint, client)
-		case 1:
-			configCommand(blueprint, config, client)
-		case 2:
-			{
-				color.LightGreen.Println("Bye.")
-				os.Exit(0)
+	if *headless {
+		if *blueprintFile != "" {
+			data, err := ioutil.ReadFile(*blueprintFile)
+			if err != nil {
+				log.Panic("can't read file", *blueprintFile, err)
+			}
+			err = json.Unmarshal(data, &blueprint)
+			if err != nil {
+				log.Panic("can't read file", *blueprintFile, err)
+			}
+			client.SendBlueprint(blueprint)
+		}
+
+		if *configFile != "" {
+			data, err := ioutil.ReadFile(*configFile)
+			if err != nil {
+				log.Panic("can't read file", *configFile, err)
+			}
+			err = json.Unmarshal(data, &config)
+			if err != nil {
+				log.Panic("can't read file", *configFile, err)
+			}
+			client.SendConfig(config)
+		}
+		os.Exit(0)
+	} else {
+		for {
+			num := Menu("What do you want to do?", color.LightGreen, []string{
+				"Create a new Blueprint Realm",
+				"Create or Update a Realm Config",
+				"quit",
+			})
+
+			switch num {
+			case 0:
+				blueprintCommand(blueprint, client)
+			case 1:
+				configCommand(blueprint, config, client)
+			case 2:
+				{
+					color.LightGreen.Println("Bye.")
+					os.Exit(0)
+				}
 			}
 		}
 	}
