@@ -158,7 +158,7 @@ func (client *ConfigClient) SendBlueprint(blueprint BluePrint) error {
 		return err
 	}
 
-	if resp.StatusCode > 200 {
+	if resp.StatusCode > 300 {
 		return fmt.Errorf("failed to upload blueprint %+v", string(data))
 	}
 	log.Debug("service response is %s", string(data))
