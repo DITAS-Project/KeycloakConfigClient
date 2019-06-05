@@ -47,7 +47,7 @@ func main() {
 	address := flag.String("address", "", "KeyCloakConfig API address")
 	verbose := flag.Bool("verbose", false, "Enable verbose logging")
 	unsecured := flag.Bool("unsecured", true, "trust all ssl certificates")
-	headless := flag.Bool("headless", true, "run without cli")
+	headless := flag.Bool("headless", false, "run without cli")
 
 	blueprintFile := flag.String("bl", "", "blueprint file to commit")
 	configFile := flag.String("cf", "", "relam config to commit,needs to have blueprint id.")
@@ -97,7 +97,10 @@ func main() {
 			if err != nil {
 				log.Panic("can't read file", *blueprintFile, err)
 			}
-			client.SendBlueprint(blueprint)
+			err = client.SendBlueprint(blueprint)
+			if err != nil{
+				log.Error(err)
+			}
 		}
 
 		if *configFile != "" {
@@ -109,7 +112,10 @@ func main() {
 			if err != nil {
 				log.Panic("can't read file", *configFile, err)
 			}
-			client.SendConfig(config)
+			err = client.SendConfig(config)
+			if err != nil{
+				log.Error(err)
+			}
 		}
 		os.Exit(0)
 	} else {
