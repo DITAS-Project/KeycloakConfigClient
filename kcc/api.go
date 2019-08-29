@@ -26,6 +26,7 @@ type KeyMessage struct {
 type BluePrint struct {
 	BlueprintID string `json:"blueprintID"`
 	ClientId    string `json:"clientId"`
+	RedirectURI string `json:"defaultRedirectUri"`
 }
 
 type Config struct {
