@@ -40,3 +40,15 @@ type UserConfig struct {
 	Password string   `json:"password"`
 	Roles    []string `json:"realmRoles"`
 }
+
+func (config *Config) splitByUser() []Config {
+	configs := make([]Config, len(config.Users))
+	for i, user := range config.Users {
+		configs[i] = Config{
+			BlueprintID: config.BlueprintID,
+			Roles:       user.Roles,
+			Users:       []UserConfig{user},
+		}
+	}
+	return configs
+}

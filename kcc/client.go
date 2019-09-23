@@ -119,12 +119,36 @@ func encryptWithPublicKey(msg []byte, pub *rsa.PublicKey) ([]byte, error) {
 }
 
 func (client *ConfigClient) SendConfig(config Config) error {
+
 	data, err := json.Marshal(config)
 	if err != nil {
 		log.Error("failed to marshal config")
 		return err
 	}
+	if len(data) > 256 {
 
+		//TODO: messge to big, need to split up!
+		configs := config.splitByUser()
+		for _, cnf := range configs {
+			data, err := json.Marshal(cnf)
+			if err != nil {
+				log.Error("failed to marshal config")
+				return err
+			}
+			err = client.sendConfig(data, cnf)
+			if err != nil {
+				return err
+			}
+
+		}
+	} else {
+		return client.sendConfig(data, config)
+	}
+
+	return nil
+}
+
+func (client *ConfigClient) sendConfig(data []byte, config Config) error {
 	msg, err := encryptWithPublicKey(data, client.key)
 	if err != nil {
 		log.Error("failed to encrypt config")
@@ -138,6 +162,7 @@ func (client *ConfigClient) SendConfig(config Config) error {
 		return fmt.Errorf("failed to upadte config %s\n", string(data))
 	}
 	log.Debug("service response is %s", string(data))
+
 	return nil
 }
 
